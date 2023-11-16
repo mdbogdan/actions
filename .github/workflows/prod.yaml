@@ -1,0 +1,41 @@
+name: Production Workflow
+
+on:
+  push: 
+    branches:
+      - main
+
+jobs:
+  
+  test-and-deploy-to-netlify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: use node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      
+      - name: install dependendecies
+        run: yarn install
+      
+      - name: run tests
+        run: yarn test
+      
+      - name: Netlify Deploy
+        uses: jsmrcaga/action-netlify-deploy@v2.0.0
+        with:
+          # Auth token to use with netlify
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          # Your Netlify site id
+          NETLIFY_SITE_ID:  ${{ secrets.NETLIFY_SITE_ID }}
+          # Directory where built files are stored
+          build_directory: './dist'
+          # Command to install dependencies
+          install_command: yarn install
+          # Command to build static website
+          build_command: yarn build   
+
